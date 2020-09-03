@@ -5,25 +5,31 @@
 </template>
 
 <script>
-
 export default {
   name: "App",
 };
 </script>
 
 <style>
-@import url("https://fonts.googleapis.com/css2?family=Zilla+Slab&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Ibarra+Real+Nova:wght@600&display=swap");
 
 * {
   box-sizing: border-box;
-  margin: 0;
 }
 
 body {
   background-color: rgb(10, 10, 10);
+  margin: 10px 90px;
+  line-height: 1.4;
 }
 
 #app {
-  font-family: "Zilla Slab", serif;
+  font-family: "Ibarra Real Nova", serif;
+}
+
+@media (max-width: 360px) {
+  body {
+    margin: 0;
+  }
 }
 </style>

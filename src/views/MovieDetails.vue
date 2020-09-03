@@ -3,24 +3,27 @@
     <header class="movieDetails">
       <font-awesome-icon @click="goToMainPage()" class="icon" icon="reply"></font-awesome-icon>
     </header>
-    <div class="movieInfo" v-if="movieResult.id">
+    <div class="movieInfo">
       <div class="poster">
         <img
           v-if="movieResult.poster_path"
           :src="'https://image.tmdb.org/t/p/w400' + movieResult.poster_path"
         />
         <img v-else src="../assets/no_image.jpg" />
+        <div class="overlay">
+          <div class="text">{{movieResult.vote_average}}</div>
+        </div>
       </div>
       <div class="info">
         <h1 class="movieTitle">{{movieResult.title}}</h1>
         <ul>
-          <li class="movieDate">{{movieResult.release_date}}</li> |
-          <li class="moviRuntime">{{movieResult.runtime}} min</li> |
+          <li class="movieDate">{{movieResult.release_date}}</li>|
+          <li class="moviRuntime">{{movieResult.runtime}} min</li>|
           <li
             class="movieLanguage"
             v-for="language in movieResult.spoken_languages"
             :key="language"
-          >{{language.name}}</li>
+          >{{language.name}} |</li>
         </ul>
         <p class="movieOverview">{{movieResult.overview}}</p>
         <p class="genres">
@@ -28,7 +31,7 @@
           <span class="genre" v-for="genre in movieResult.genres" :key="genre.id">{{genre.name}}</span>
         </p>
         <h4 class="movieImdb">
-          Look for more details on 
+          Look for more details on
           <a
             :href="`https://www.imdb.com/title/${movieResult.imdb_id}`"
             target="_blank"
@@ -78,15 +81,21 @@ export default {
 </script>
 
 <style>
+.container {
+  display: grid;
+  grid-gap: 40px;
+  grid-template-areas:
+    "h"
+    "c";
+}
+
 .movieDetails {
-  height: 10vh;
+  grid-area: h;
 }
 
 .movieDetails .icon {
   font-size: 250%;
-  float: right;
   color: #fff;
-  margin-right: 10%;
   margin-top: 20px;
   cursor: pointer;
   opacity: 0.8;
@@ -99,23 +108,65 @@ export default {
 }
 
 .movieInfo {
+  grid-area: c;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   color: #f1f2f6;
-  width: 90%;
-  height: 90vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
-.movieInfo .poster,
-.movieInfo .info {
-  flex: 1;
+.movieInfo .poster {
+  position: relative;
+  width: 70%;
+  margin-left: 70px;
 }
 
 .movieInfo .poster img {
-  width: 65%;
-  margin-left: 110px;
+  display: block;
+  width: 100%;
+  height: auto;
   border-radius: 4px;
+}
+
+.overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0%;
+  background-color: rgb(26, 25, 25);
+  opacity: 0.9;
+  overflow: hidden;
+  width: 100%;
+  height: 0;
+  transition: 0.5s ease;
+}
+
+.movieInfo .poster:hover .overlay {
+  height: 100%;
+}
+
+.text {
+  color: #f1f2f6;
+  font-size: 200%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  width: 100px;
+  height: 100px;
+  border: 2px solid #f1f2f6;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0.6;
+}
+
+.movieInfo .info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .info .movieTitle {
@@ -152,5 +203,65 @@ export default {
   background-color: #f1f2f6;
   color: black;
   font-weight: bold;
+}
+
+@media (max-width: 768px) {
+  .movieInfo {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .movieInfo .poster {
+    margin: 0 auto;
+  }
+
+  .info .movieTitle {
+    font-size: 220%;
+  }
+}
+
+@media (max-width: 360px) {
+  .movieDetails .icon {
+    margin-left: 20px;
+    font-size: 150%;
+  }
+
+  .movieInfo {
+    margin: 0 15px;
+  }
+
+  .info .movieTitle {
+  font-size: 200%;
+}
+
+.info .movieOverview {
+  font-size: 100%;
+}
+
+.genres {
+  flex-direction: column;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1px;
+  font-size: 110%;
+}
+
+.genres .genre {
+  display: block;
+  border: 1px solid #f1f2f6;
+  border-radius: 4px;
+  width: 50%;
+  font-weight: bold;
+  margin: 0;
+  padding: 5px 10px;
+  margin-bottom: 5px;
+}
+
+.genres .genre:first-of-type {
+  margin-top: 10px;
+  margin-left: 0;
+}
+
 }
 </style>

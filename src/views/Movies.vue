@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="moviesContainer">
     <header>
       <div class="title">
         <h2>
@@ -9,12 +9,20 @@
       </div>
       <div class="search">
         <input type="text" v-model="inputText" placeholder="Search for movie title or keyword..." />
-        <button @click="getData()">
+        <button @click="getData(); isHidden = true">
           <font-awesome-icon icon="search" class="searchIcon" />
         </button>
       </div>
     </header>
-    <div class="movieContainer">
+    <div v-if="!isHidden" class="popularMovies">
+      <span>
+        <h1>What's popular these days?</h1>
+      </span>
+    </div>
+    <!-- <div v-if="!isHidden" class="noMatch">
+      <p v-html="message"></p>
+    </div>-->
+    <div class="content">
       <div class="movieCard" v-for="movie in movieArray" :key="movie.id">
         <router-link :to="'/movie/' + movie.id">
           <div class="poster" @click="seeDetails(movie.id)">
@@ -24,14 +32,17 @@
             />
             <img v-else src="../assets/no_image.jpg" />
           </div>
+          <div class="textMovies">
+            <h3 class="title">{{movie.title}}</h3>
+            <h6 class="vote">Rating: {{movie.vote_average}}</h6>
+          </div>
         </router-link>
-
-        <div class="text">
-          <h3 class="title">{{movie.title}}</h3>
-          <h6 class="vote">Rating: {{movie.vote_average}}</h6>
-        </div>
       </div>
     </div>
+    <div @click.prevent="loadMore" class="loadMore">Load More</div>
+    <footer>
+      <p v-html="copyright"></p>
+    </footer>
   </div>
 </template>
 
@@ -44,13 +55,16 @@ export default {
       title: "MovieViewer",
       inputText: "",
       movieArray: [],
+      copyright: "&#169; 2020 Dušica Žeravić. All rights reserved.",
+      isHidden: false,
+      currentPage: 1,
     };
   },
   methods: {
     getData() {
       axios
         .get(
-          `https://api.themoviedb.org/3/search/movie?api_key=48dda66521ab26fb827b3aa9dbae2350&query=${this.inputText}`
+          `https://api.themoviedb.org/3/search/movie?api_key=48dda66521ab26fb827b3aa9dbae2350&query=${this.inputText}&page=${this.currentPage}`
         )
         .then((response) => {
           console.log(response);
@@ -65,29 +79,65 @@ export default {
     seeDetails(id) {
       this.$router.push("/movie" + id);
     },
+    loadMore() {
+      this.currentPage++;
+      axios
+        .get(
+          `${this.$store.state.url}/popular?api_key=${this.$store.state.apiKey}&page=${this.currentPage}`
+        )
+        .then((response) => {
+          let data = response.data;
+          let newData = this.movieArray.concat(data.results);
+          this.movieArray = newData;
+        });
+    },
+  },
+  mounted() {
+    axios
+      .get(
+        `${this.$store.state.url}/popular?api_key=${this.$store.state.apiKey}&page=${this.currentPage}`
+      )
+      .then((response) => {
+        console.log(response);
+        this.movieArray = response.data.results;
+      })
+      .catch((error) => console.log(error));
   },
 };
 </script>
 
 <style scoped>
+.moviesContainer {
+  height: 90vh;
+  display: grid;
+  grid-gap: 20px;
+  grid-template-areas:
+    "header"
+    "popular"
+    "content"
+    "loadMore"
+    "footer";
+}
+
 header {
-  height: 100px;
-  margin-bottom: 30px;
+  display: grid;
+  grid-gap: 20px;
+  grid-area: header;
+  grid-template-columns: repeat(2, 1fr);
+  padding: 1rem;
   display: flex;
   justify-content: space-between;
 }
 
 header .title {
   color: #f1f2f6;
-  margin-left: 12%;
-  line-height: 100px;
   font-size: 130%;
 }
 
 header .search {
-  margin-right: 10%;
   line-height: 100px;
 }
+
 .search input,
 .search button {
   height: 40px;
@@ -117,29 +167,80 @@ header .search {
 }
 
 .search button {
-  width: 8%;
   margin-left: 12px;
   cursor: pointer;
   color: #f1f2f6;
 }
 
-.movieContainer {
-  width: 90%;
-  margin: 100px auto;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
+.content {
+  display: grid;
+  grid-gap: 30px;
+  grid-area: content;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }
 
+.popularMovies {
+  grid-area: popular;
+  text-align: center;
+  color: #f1f2f6;
+  margin-bottom: 50px;
+}
+
+.popularMovies h1 {
+  cursor: pointer;
+  display: inline-block;
+  font-size: 270%;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  background: linear-gradient(
+    to bottom,
+    rgb(235, 235, 235),
+    rgb(199, 198, 198) 60%,
+    rgb(211, 210, 210) 60%,
+    rgb(228, 226, 226) 100%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  transition: background 0.2s ease-out;
+}
+
+.popularMovies span {
+  position: relative;
+}
+
+span:before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: #f1f2f6;
+  bottom: 8px;
+  transition: all 0.2s ease-out;
+}
+
+h1:hover {
+  background-position: 0 11px;
+}
+
+span:hover:before {
+  transform: translateY(10px);
+}
+
+/* .noMatch {
+  grid-area: popular;
+  color: #f1f2f6;
+  font-size: 120%;
+  text-align: center;
+} */
+
 .movieCard {
-  width: 20%;
   height: 400px;
   box-shadow: 0 -2px 10px rgb(182, 181, 181);
   transition: transform 0.5s, opacity 0.5s;
   margin-bottom: 30px;
   cursor: pointer;
-  margin-left: 30px;
 }
 
 .movieCard:hover {
@@ -149,7 +250,6 @@ header .search {
 
 .movieCard .poster {
   height: 80%;
-  width: 100%;
   opacity: 0.7;
 }
 
@@ -159,21 +259,94 @@ header .search {
   height: 100%;
 }
 
-.movieCard .text {
-  height: 20%;
+.movieCard .textMovies {
+  height: 30%;
   text-align: center;
   color: #f1f2f6;
 }
 
-.movieCard .text .title {
+.movieCard .textMovies .title {
   height: 50%;
   font-size: 120%;
   margin-top: 5px;
 }
 
-.movieCard .text .vote {
+.movieCard .textMovies .vote {
   height: 50%;
   font-size: 90%;
-  margin-top: 10px;
+  margin-top: -30px;
+}
+
+.loadMore {
+  grid-area: loadMore;
+  text-align: center;
+  color: rgb(10, 10, 10);
+  border: 2px solid #f1f2f6;
+  background: #f1f2f6;
+  border-radius: 4px;
+  width: 20%;
+  height: 40px;
+  line-height: 40px;
+  font-size: 120%;
+  margin: auto;
+  cursor: pointer;
+  margin-bottom: 30px;
+  transition: transform 0.5s ease;
+}
+
+.loadMore:hover {
+  transform: scale(0.9);
+  background: rgb(10, 10, 10);
+  color: #f1f2f6;
+  border: none;
+}
+
+footer {
+  grid-area: footer;
+  color: #f1f2f6;
+  text-align: center;
+  margin-top: auto;
+}
+
+@media (max-width: 768px) {
+  header {
+    grid-template: 1fr;
+    display: block;
+    text-align: center;
+  }
+
+  .popularMovies h1 {
+    font-size: 200%;
+  }
+}
+
+@media (max-width: 360px) {
+  header .title {
+    font-size: 110%;
+  }
+
+  .search input {
+    width: 250px;
+    font-size: 70%;
+  }
+
+  .popularMovies {
+    margin: 20px 0;
+  }
+
+  .popularMovies h1 {
+    font-size: 120%;
+  }
+
+  .movieCard {
+    width: 250px;
+    margin: 0 auto;
+  }
+
+  .loadMore {
+    width: 30%;
+    font-size: 100%;
+    margin-bottom: 10px;
+  }
 }
 </style>
