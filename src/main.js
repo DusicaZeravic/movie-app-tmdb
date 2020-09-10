@@ -2,6 +2,8 @@ import Vue from 'vue'
 import App from './App'
 import router from './routes'
 import store from './store'
+import VueYoutube from 'vue-youtube'
+Vue.use(VueYoutube)
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faFilm, faSearch, faReply } from '@fortawesome/free-solid-svg-icons'

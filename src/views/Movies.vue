@@ -24,8 +24,11 @@
     </div>-->
     <div class="content">
       <div class="movieCard" v-for="movie in movieArray" :key="movie.id">
-        <router-link :to="'/movie/' + movie.id">
+        <router-link class="routerLink" :to="'/movie/' + movie.id">
           <div class="poster" @click="seeDetails(movie.id)">
+            <div class="rating">
+              <h6>{{movie.vote_average}}</h6>
+            </div>
             <img
               v-if="movie.poster_path"
               :src="'https://image.tmdb.org/t/p/w300' + movie.poster_path"
@@ -34,19 +37,20 @@
           </div>
           <div class="textMovies">
             <h3 class="title">{{movie.title}}</h3>
-            <h6 class="vote">Rating: {{movie.vote_average}}</h6>
           </div>
         </router-link>
       </div>
     </div>
     <div @click.prevent="loadMore" class="loadMore">Load More</div>
-    <footer>
+    <!-- <footer>
       <p v-html="copyright"></p>
-    </footer>
+    </footer>-->
+    <footer-app></footer-app>
   </div>
 </template>
 
 <script>
+import Footer from "../components/Footer.vue";
 import axios from "axios";
 
 export default {
@@ -55,7 +59,7 @@ export default {
       title: "MovieViewer",
       inputText: "",
       movieArray: [],
-      copyright: "&#169; 2020 Dušica Žeravić. All rights reserved.",
+      // copyright: "&#169; 2020 Dušica Žeravić. All rights reserved.",
       isHidden: false,
       currentPage: 1,
     };
@@ -92,7 +96,7 @@ export default {
         });
     },
   },
-  mounted() {
+  created() {
     axios
       .get(
         `${this.$store.state.url}/popular?api_key=${this.$store.state.apiKey}&page=${this.currentPage}`
@@ -102,6 +106,9 @@ export default {
         this.movieArray = response.data.results;
       })
       .catch((error) => console.log(error));
+  },
+  components: {
+    footerApp: Footer,
   },
 };
 </script>
@@ -187,7 +194,6 @@ header .search {
 }
 
 .popularMovies h1 {
-  cursor: pointer;
   display: inline-block;
   font-size: 270%;
   text-transform: uppercase;
@@ -228,12 +234,9 @@ span:hover:before {
   transform: translateY(10px);
 }
 
-/* .noMatch {
-  grid-area: popular;
-  color: #f1f2f6;
-  font-size: 120%;
-  text-align: center;
-} */
+.routerLink {
+  text-decoration: none;
+}
 
 .movieCard {
   height: 400px;
@@ -251,6 +254,26 @@ span:hover:before {
 .movieCard .poster {
   height: 80%;
   opacity: 0.7;
+  position: relative;
+}
+
+.poster .rating {
+  float: left;
+  position: absolute;
+  left: -5px;
+  top: -5px;
+  z-index: 1000;
+  /* background-color: #bdc00d; */
+  background-color: rgb(207, 17, 55);
+  height: 30px;
+  width: 50px;
+  color: #fff;
+  font-weight: bold;
+  font-size: 200%;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .movieCard .poster img {
@@ -266,15 +289,11 @@ span:hover:before {
 }
 
 .movieCard .textMovies .title {
-  height: 50%;
+  height: 40%;
   font-size: 120%;
-  margin-top: 5px;
-}
-
-.movieCard .textMovies .vote {
-  height: 50%;
-  font-size: 90%;
-  margin-top: -30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .loadMore {
@@ -301,12 +320,12 @@ span:hover:before {
   border: none;
 }
 
-footer {
+/* footer {
   grid-area: footer;
   color: #f1f2f6;
   text-align: center;
   margin-top: auto;
-}
+} */
 
 @media (max-width: 768px) {
   header {

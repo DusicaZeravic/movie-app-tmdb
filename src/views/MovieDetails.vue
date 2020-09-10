@@ -11,7 +11,7 @@
         />
         <img v-else src="../assets/no_image.jpg" />
         <div class="overlay">
-          <div class="text">{{movieResult.vote_average}}</div>
+          <div class="text">{{movieResult.vote_average}}/10</div>
         </div>
       </div>
       <div class="info">
@@ -45,37 +45,62 @@
         </h4>
       </div>
     </div>
+
+    <section class="trailer">
+      <h1>Trailer</h1>
+      <youtube class="video" width="800" height="450" :video-id="videoUrl" ref="youtube"></youtube>
+    </section>
+    <footer-app></footer-app>
   </div>
 </template>
 
 <script>
+import Footer from "../components/Footer";
 import axios from "axios";
 
 export default {
-  mounted() {
-    axios
-      .get(
-        `${this.$store.state.url}/${this.number}?api_key=${this.$store.state.apiKey}`
-      )
-      .then((response) => {
-        console.log(response);
-        this.movieResult = response.data;
-        console.log(this.movieResult);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+  created() {
+    this.getMovieInfo();
+    this.getTrailer();
   },
   data() {
     return {
       number: this.$router.currentRoute.params.id,
       movieResult: {},
+      videoUrl: "",
     };
   },
   methods: {
     goToMainPage() {
       this.$router.push("/");
     },
+    getMovieInfo() {
+      axios
+        .get(
+          `${this.$store.state.url}/${this.number}?api_key=${this.$store.state.apiKey}`
+        )
+        .then((response) => {
+          console.log(response);
+          this.movieResult = response.data;
+          console.log(this.movieResult);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    getTrailer() {
+      axios
+        .get(
+          `${this.$store.state.url}/${this.number}/videos?api_key=${this.$store.state.apiKey}`
+        )
+        .then((response) => {
+          this.videoUrl = response.data.results[0].key;
+          console.log(this.videoUrl);
+        });
+    },
+  },
+  components: {
+    footerApp: Footer,
   },
 };
 </script>
@@ -86,11 +111,15 @@ export default {
   grid-gap: 40px;
   grid-template-areas:
     "h"
-    "c";
+    "c"
+    "video"
+    "footer";
 }
 
 .movieDetails {
   grid-area: h;
+  position: sticky;
+  top: 0;
 }
 
 .movieDetails .icon {
@@ -205,6 +234,36 @@ export default {
   font-weight: bold;
 }
 
+.trailer {
+  display: grid;
+  grid-area: video;
+  grid-template-columns: 1fr;
+  margin: 0 auto;
+  overflow: hidden;
+  float: none;
+  clear: both;
+  width: 100%;
+  position: relative;
+  padding-bottom: 56.25%;
+  padding-top: 25px;
+  height: 0;
+}
+
+.trailer h1 {
+  color: #f1f2f6;
+  font-size: 180%;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.trailer .video {
+  position: absolute;
+  top: 100px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
 @media (max-width: 768px) {
   .movieInfo {
     grid-template-columns: 1fr;
@@ -217,6 +276,10 @@ export default {
 
   .info .movieTitle {
     font-size: 220%;
+  }
+
+  .trailer .video{
+    top: 0;
   }
 }
 
@@ -231,37 +294,36 @@ export default {
   }
 
   .info .movieTitle {
-  font-size: 200%;
-}
+    font-size: 200%;
+  }
 
-.info .movieOverview {
-  font-size: 100%;
-}
+  .info .movieOverview {
+    font-size: 100%;
+  }
 
-.genres {
-  flex-direction: column;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 1px;
-  font-size: 110%;
-}
+  .genres {
+    flex-direction: column;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1px;
+    font-size: 110%;
+  }
 
-.genres .genre {
-  display: block;
-  border: 1px solid #f1f2f6;
-  border-radius: 4px;
-  width: 50%;
-  font-weight: bold;
-  margin: 0;
-  padding: 5px 10px;
-  margin-bottom: 5px;
-}
+  .genres .genre {
+    display: block;
+    border: 1px solid #f1f2f6;
+    border-radius: 4px;
+    width: 50%;
+    font-weight: bold;
+    margin: 0;
+    padding: 5px 10px;
+    margin-bottom: 5px;
+  }
 
-.genres .genre:first-of-type {
-  margin-top: 10px;
-  margin-left: 0;
-}
-
+  .genres .genre:first-of-type {
+    margin-top: 10px;
+    margin-left: 0;
+  }
 }
 </style>
