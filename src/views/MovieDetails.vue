@@ -50,12 +50,14 @@
       <h1>Trailer</h1>
       <youtube class="video" width="800" height="450" :video-id="videoUrl" ref="youtube"></youtube>
     </section>
+    <similarmovies-app class="similar"></similarmovies-app>
     <footer-app></footer-app>
   </div>
 </template>
 
 <script>
 import Footer from "../components/Footer";
+import SimilarMovies from "../components/SimilarMovies"
 import axios from "axios";
 
 export default {
@@ -101,6 +103,7 @@ export default {
   },
   components: {
     footerApp: Footer,
+    similarmoviesApp: SimilarMovies
   },
 };
 </script>
@@ -113,18 +116,22 @@ export default {
     "h"
     "c"
     "video"
-    "footer";
+    "similarmovies-app"
+    "footer"
+    ;
 }
 
 .movieDetails {
   grid-area: h;
-  position: sticky;
-  top: 0;
+  position: fixed;
+  height: 100px;
+  width: 100%;
+  z-index: 100;  
 }
 
 .movieDetails .icon {
   font-size: 250%;
-  color: #fff;
+  color: #f1f2f6;
   margin-top: 20px;
   cursor: pointer;
   opacity: 0.8;
@@ -141,6 +148,7 @@ export default {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   color: #f1f2f6;
+  margin-top: 80px;
 }
 
 .movieInfo .poster {
@@ -264,6 +272,12 @@ export default {
   height: 100%;
 }
 
+.similar {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-area: similarmovies-app;
+}
+
 @media (max-width: 768px) {
   .movieInfo {
     grid-template-columns: 1fr;
@@ -271,7 +285,11 @@ export default {
   }
 
   .movieInfo .poster {
-    margin: 0 auto;
+    margin: 0 120px;
+  }
+
+  .movieInfo .info {
+    margin-left: -60px;
   }
 
   .info .movieTitle {
@@ -279,22 +297,32 @@ export default {
   }
 
   .trailer .video{
+    width: 90%;
     top: 0;
   }
+
+  .similar {
+  margin-left: -80px;
+}
 }
 
 @media (max-width: 360px) {
   .movieDetails .icon {
     margin-left: 20px;
-    font-size: 150%;
+    font-size: 200%;
   }
 
-  .movieInfo {
-    margin: 0 15px;
+  .movieInfo .poster {
+    margin: 40px auto;
+  }
+
+  .movieInfo .info {
+    width: 80%;
+    margin: 0 auto;
   }
 
   .info .movieTitle {
-    font-size: 200%;
+    font-size: 260%;
   }
 
   .info .movieOverview {
@@ -324,6 +352,14 @@ export default {
   .genres .genre:first-of-type {
     margin-top: 10px;
     margin-left: 0;
+  }
+
+  .trailer .video {
+    width: 80%;
+    margin-left: 100px;
+  }
+
+  .similar {
   }
 }
 </style>

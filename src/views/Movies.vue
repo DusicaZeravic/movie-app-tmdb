@@ -8,26 +8,29 @@
         </h2>
       </div>
       <div class="search">
-        <input type="text" v-model="inputText" placeholder="Search for movie title or keyword..." />
-        <button @click="getData(); isHidden = true">
-          <font-awesome-icon icon="search" class="searchIcon" />
-        </button>
+        <input
+          type="text"
+          @keyup.enter="getData()"
+          v-model="inputText"
+          placeholder="Search for movie title or keyword..."
+        />
+        <font-awesome-icon icon="search" class="searchIcon" />
       </div>
     </header>
-    <div v-if="!isHidden" class="popularMovies">
+    <div class="popularMovies">
       <span>
         <h1>What's popular these days?</h1>
       </span>
     </div>
-    <!-- <div v-if="!isHidden" class="noMatch">
-      <p v-html="message"></p>
-    </div>-->
-    <div class="content">
+    <div v-if="movieArray.length > 0" class="content">
       <div class="movieCard" v-for="movie in movieArray" :key="movie.id">
         <router-link class="routerLink" :to="'/movie/' + movie.id">
           <div class="poster" @click="seeDetails(movie.id)">
             <div class="rating">
-              <h6>{{movie.vote_average}}</h6>
+              <h6>
+                <font-awesome-icon icon="star" class="starIcon" />
+                {{movie.vote_average}}
+              </h6>
             </div>
             <img
               v-if="movie.poster_path"
@@ -41,10 +44,8 @@
         </router-link>
       </div>
     </div>
+    <div v-else class="noMatch">There is no match with your search!</div>
     <div @click.prevent="loadMore" class="loadMore">Load More</div>
-    <!-- <footer>
-      <p v-html="copyright"></p>
-    </footer>-->
     <footer-app></footer-app>
   </div>
 </template>
@@ -59,7 +60,6 @@ export default {
       title: "MovieViewer",
       inputText: "",
       movieArray: [],
-      // copyright: "&#169; 2020 Dušica Žeravić. All rights reserved.",
       isHidden: false,
       currentPage: 1,
     };
@@ -120,6 +120,7 @@ export default {
   grid-gap: 20px;
   grid-template-areas:
     "header"
+    "no-match"
     "popular"
     "content"
     "loadMore"
@@ -142,11 +143,11 @@ header .title {
 }
 
 header .search {
+  position: relative;
   line-height: 100px;
 }
 
-.search input,
-.search button {
+.search input {
   height: 40px;
   font-size: 100%;
   border-radius: 4px;
@@ -154,10 +155,7 @@ header .search {
   color: #d8d8da;
   font-weight: bold;
   box-shadow: 0 -2px 10px rgb(182, 181, 181);
-}
-
-.search input {
-  width: 350px;
+  width: 400px;
   letter-spacing: 2px;
   text-indent: 4px;
 }
@@ -168,15 +166,23 @@ header .search {
   font-size: 90%;
 }
 
-.search input:focus,
-.search button:focus {
+.search input:focus {
   outline: none;
 }
 
-.search button {
-  margin-left: 12px;
-  cursor: pointer;
+.searchIcon {
   color: #f1f2f6;
+  position: absolute;
+  top: 40px;
+  right: 20px;
+}
+
+.noMatch {
+  display: grid;
+  grid-area: no-match;
+  color: #f1f2f6;
+  text-align: center;
+  font-size: 140%;
 }
 
 .content {
@@ -263,10 +269,9 @@ span:hover:before {
   left: -5px;
   top: -5px;
   z-index: 1000;
-  /* background-color: #bdc00d; */
   background-color: rgb(207, 17, 55);
   height: 30px;
-  width: 50px;
+  width: 60px;
   color: #fff;
   font-weight: bold;
   font-size: 200%;
@@ -296,6 +301,12 @@ span:hover:before {
   align-items: center;
 }
 
+.starIcon {
+  font-size: 60%;
+  float: left;
+  margin: 8px 3px 0 3px;
+}
+
 .loadMore {
   grid-area: loadMore;
   text-align: center;
@@ -320,13 +331,6 @@ span:hover:before {
   border: none;
 }
 
-/* footer {
-  grid-area: footer;
-  color: #f1f2f6;
-  text-align: center;
-  margin-top: auto;
-} */
-
 @media (max-width: 768px) {
   header {
     grid-template: 1fr;
@@ -334,19 +338,35 @@ span:hover:before {
     text-align: center;
   }
 
+  header .title {
+    font-size: 110%;
+  }
+
+  .searchIcon {
+    right: 90px;
+  }
+
   .popularMovies h1 {
     font-size: 200%;
+  }
+
+  span::before {
+    display: none;
   }
 }
 
 @media (max-width: 360px) {
   header .title {
-    font-size: 110%;
+    font-size: 100%;
   }
 
   .search input {
     width: 250px;
     font-size: 70%;
+  }
+
+  .searchIcon {
+    display: none;
   }
 
   .popularMovies {
@@ -355,6 +375,10 @@ span:hover:before {
 
   .popularMovies h1 {
     font-size: 120%;
+  }
+
+  span::before {
+    display: none;
   }
 
   .movieCard {
