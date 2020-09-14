@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>Similar Movies</h1>
+    <h1>More like this</h1>
     <div v-if="similarMovies.length > 0" class="carousel-wrapper" ref="wrapper">
       <div class="carousel--nav__left" @click="moveCarousel(-1)" :disabled="atHeadOfList"></div>
       <div class="carousel" :style="{ width: carouselWidth + 'px'}">
@@ -113,7 +113,7 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 50px auto;
+  margin: 20px auto;
 }
 
 .carousel {

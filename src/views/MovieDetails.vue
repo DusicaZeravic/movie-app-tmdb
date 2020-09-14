@@ -45,7 +45,7 @@
         </h4>
       </div>
     </div>
-
+    <actors-app class="actors"></actors-app>
     <section class="trailer">
       <h1>Trailer</h1>
       <youtube class="video" width="800" height="450" :video-id="videoUrl" ref="youtube"></youtube>
@@ -57,7 +57,8 @@
 
 <script>
 import Footer from "../components/Footer";
-import SimilarMovies from "../components/SimilarMovies"
+import SimilarMovies from "../components/SimilarMovies";
+import Actors from "../components/Actors";
 import axios from "axios";
 
 export default {
@@ -103,7 +104,8 @@ export default {
   },
   components: {
     footerApp: Footer,
-    similarmoviesApp: SimilarMovies
+    similarmoviesApp: SimilarMovies,
+    actorsApp: Actors,
   },
 };
 </script>
@@ -115,10 +117,10 @@ export default {
   grid-template-areas:
     "h"
     "c"
+    "actors"
     "video"
     "similarmovies-app"
-    "footer"
-    ;
+    "footer";
 }
 
 .movieDetails {
@@ -126,7 +128,7 @@ export default {
   position: fixed;
   height: 100px;
   width: 100%;
-  z-index: 100;  
+  z-index: 100;
 }
 
 .movieDetails .icon {
@@ -242,6 +244,11 @@ export default {
   font-weight: bold;
 }
 
+.actors {
+  display: grid;
+  grid-area: actors;
+}
+
 .trailer {
   display: grid;
   grid-area: video;
@@ -269,7 +276,8 @@ export default {
   top: 100px;
   left: 0;
   width: 100%;
-  height: 100%;
+  height: 90%;
+  margin-top: 20px;
 }
 
 .similar {
@@ -296,14 +304,18 @@ export default {
     font-size: 220%;
   }
 
-  .trailer .video{
+  .trailer {
+    height: 100vh;
+  }
+
+  .trailer .video {
     width: 90%;
     top: 0;
   }
 
   .similar {
-  margin-left: -80px;
-}
+    margin-left: -80px;
+  }
 }
 
 @media (max-width: 360px) {
@@ -359,7 +371,5 @@ export default {
     margin-left: 100px;
   }
 
-  .similar {
-  }
 }
 </style>
