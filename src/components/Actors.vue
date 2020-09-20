@@ -2,7 +2,7 @@
   <div class="actorsContainer">
     <h1>Cast</h1>
     <button @click.prevent="viewAll()">View All</button>
-    <div class="cast">
+    <div v-if="firstFiveActors.length > 0" class="cast">
       <div class="actorCard" v-for="actor in firstFiveActors" :key="actor.id">
         <div class="image">
           <img
@@ -16,6 +16,7 @@
         </div>
       </div>
     </div>
+    <div v-else class="noCast">{{ noCast }}</div>
   </div>
 </template>
 
@@ -28,6 +29,7 @@ export default {
       actors: [],
       firstFiveActors: [],
       moreActors: [],
+      noCast: "The cast info for this movie is not available!",
     };
   },
   created() {
@@ -42,7 +44,7 @@ export default {
         .then((response) => {
           this.actors = response.data.cast;
           console.log(this.actors);
-          this.firstFiveActors = this.actors.splice(0, 5);
+          this.firstFiveActors = this.actors.splice(0, 7);
           console.log(this.firstFiveActors);
           this.moreActors = this.actors.slice();
           console.log(this.moreActors);
@@ -55,9 +57,9 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .actorsContainer {
-  margin: 40px 0 10px 0;
+  margin: 100px 10px 10px 10px;
 }
 
 .actorsContainer h1 {
@@ -70,17 +72,14 @@ export default {
 
 .actorsContainer button {
   cursor: pointer;
-  width: 100px;
   height: 50px;
   background-color: rgb(10, 10, 10);
   border: none;
   color: blue;
   font-size: 120%;
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
   align-items: center;
-  position: relative;
-  right: -1050px;
 }
 
 .actorsContainer button:focus {
@@ -89,20 +88,21 @@ export default {
 
 .cast {
   display: grid;
-  grid-gap: 20px;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  margin: 20px 0 10px 0;
+  grid-gap: 15px;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  margin-bottom: 20px;
 }
 
 .actorCard {
-  width: 200px;
-  height: 400px;
+  width: 140px;
+  height: 250px;
+  padding-top: 10px;
 }
 
 .actorCard img {
   border-radius: 5px;
-  width: 200px;
-  height: 300px;
+  width: 140px;
+  height: 200px;
 }
 
 .actorCard img:hover {
@@ -111,6 +111,51 @@ export default {
 
 .actorName .name {
   color: #f1f2f6;
+  font-size: 90%;
   text-align: center;
+}
+
+.noCast {
+  color: #f1f2f6;
+  text-align: center;
+  font-size: 120%;
+}
+
+@media (max-width: 768px) {
+  .actorsContainer {
+    margin-top: 10px;
+  }
+}
+
+@media (max-width: 360px) {
+  .actorsContainer {
+    margin-top: 10px;
+  }
+
+  .cast {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+  }
+
+  .actorCard {
+    width: 100px;
+    height: 200px;
+    margin-top: 20px;
+  }
+
+  .actorCard img {
+    border-radius: 5px;
+    width: 120px;
+    height: 180px;
+  }
+
+  .actorName {
+    width: 120px;
+  }
+
+  .actorName .name {
+    margin-top: 3px;
+    text-align: center;
+  }
 }
 </style>

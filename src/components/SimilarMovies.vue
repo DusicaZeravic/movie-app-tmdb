@@ -6,14 +6,17 @@
       <div class="carousel" :style="{ width: carouselWidth + 'px'}">
         <div
           class="carousel-items"
-          :style="{ transform: 'translateX' + '(' + currentOffset + 'px' + ')'}">
-          <div ref="card"
-          :method="getMovieInfo"
+          :style="{ transform: 'translateX' + '(' + currentOffset + 'px' + ')'}"
+        >
+          <div
+            ref="card"
             class="carousel--card"
             v-for="(item, index) in similarMovies"
-            :key="index">
+            :key="index"
+          >
             <router-link class="routerLink" :to="'/movie/' + item.id">
               <img
+                @click="seeDetailsAboutSimilar()"
                 v-if="item.poster_path"
                 :src="'https://image.tmdb.org/t/p/w300' + item.poster_path"
               />
@@ -33,17 +36,12 @@
 
 <script>
 import axios from "axios";
+import DetailsMixin from "../DetailsMixin";
+
 export default {
+  mixins: [DetailsMixin],
   created() {
     this.getSimilarMovies();
-  },
-  props: {
-      method: {
-          type: Function
-      },
-  },
-  mounted() {
-      this.method();
   },
   data() {
     return {
@@ -70,6 +68,9 @@ export default {
     },
   },
   methods: {
+    seeDetailsAboutSimilar() {
+      this.seeDetails();
+    },
     getSimilarMovies() {
       axios
         .get(
@@ -92,9 +93,6 @@ export default {
     },
     setPagination() {
       this.paginationFactor = this.$refs.card[0].clientWidth + 30;
-    },
-    seeDetails(id) {
-      this.$router.push("/movie" + id);
     },
   },
 };
@@ -129,11 +127,11 @@ h1 {
 .carousel--nav__left,
 .carousel--nav__right {
   display: inline-block;
-  padding: 10px;
+  padding: 20px;
   border-top: 2px solid #f1f2f6;
   border-right: 2px solid #f1f2f6;
   cursor: pointer;
-  margin: 0 10px;
+  margin: 0 20px;
 }
 
 .carousel--nav__left:disabled,
@@ -202,9 +200,10 @@ h3 {
   font-size: 120%;
 }
 
-@media(max-width: 768px) {
+@media (max-width: 768px) {
   .carousel-wrapper {
-    width: 100%;
+    width: 80%;
+    margin: 0 auto;
   }
 
   .carousel-items .carousel--card img {
@@ -212,7 +211,7 @@ h3 {
   }
 }
 
-@media(max-width: 360px) {
+@media (max-width: 360px) {
   .carousel-wrapper {
     width: 80%;
   }

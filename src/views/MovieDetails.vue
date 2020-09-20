@@ -22,7 +22,7 @@
           <li
             class="movieLanguage"
             v-for="language in movieResult.spoken_languages"
-            :key="language"
+            :key="language.id"
           >{{language.name}} |</li>
         </ul>
         <p class="movieOverview">{{movieResult.overview}}</p>
@@ -45,11 +45,11 @@
         </h4>
       </div>
     </div>
-    <actors-app class="actors"></actors-app>
     <section class="trailer">
       <h1>Trailer</h1>
       <youtube class="video" width="800" height="450" :video-id="videoUrl" ref="youtube"></youtube>
     </section>
+    <actors-app class="actors"></actors-app>
     <similarmovies-app class="similar"></similarmovies-app>
     <footer-app></footer-app>
   </div>
@@ -117,8 +117,8 @@ export default {
   grid-template-areas:
     "h"
     "c"
-    "actors"
     "video"
+    "actors"
     "similarmovies-app"
     "footer";
 }
@@ -150,7 +150,7 @@ export default {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   color: #f1f2f6;
-  margin-top: 80px;
+  margin-top: 70px;
 }
 
 .movieInfo .poster {
@@ -238,7 +238,7 @@ export default {
   margin-right: 20px;
   border: 1px solid #f1f2f6;
   border-radius: 4px;
-  padding: 10px 20px;
+  padding: 10px 15px;
   background-color: #f1f2f6;
   color: black;
   font-weight: bold;
@@ -293,11 +293,11 @@ export default {
   }
 
   .movieInfo .poster {
-    margin: 0 120px;
+    margin: 0 auto;
   }
 
   .movieInfo .info {
-    margin-left: -60px;
+    margin: 0 60px;
   }
 
   .info .movieTitle {
@@ -306,15 +306,12 @@ export default {
 
   .trailer {
     height: 100vh;
+    margin: 0 40px;
   }
 
   .trailer .video {
     width: 90%;
     top: 0;
-  }
-
-  .similar {
-    margin-left: -80px;
   }
 }
 
@@ -325,7 +322,7 @@ export default {
   }
 
   .movieInfo .poster {
-    margin: 40px auto;
+    margin: -10px auto;
   }
 
   .movieInfo .info {
@@ -367,9 +364,12 @@ export default {
   }
 
   .trailer .video {
-    width: 80%;
-    margin-left: 100px;
+    width: 90%;
+    margin-right: 10px;
   }
 
+  .actors {
+    margin-top: -10px;
+  }
 }
 </style>

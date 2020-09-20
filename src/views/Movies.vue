@@ -1,12 +1,14 @@
 <template>
   <div class="moviesContainer">
     <header>
-      <div class="title">
-        <h2>
-          <font-awesome-icon class="icon" icon="film"></font-awesome-icon>
-          {{title}}
-        </h2>
-      </div>
+      <router-link class="routerLink" :to="'/'">
+        <div @click="getPopularMovies()" class="title">
+          <h2>
+            <font-awesome-icon class="icon" icon="film"></font-awesome-icon>
+            {{title}}
+          </h2>
+        </div>
+      </router-link>
       <div class="search">
         <input
           type="text"
@@ -25,7 +27,7 @@
     <div v-if="movieArray.length > 0" class="content">
       <div class="movieCard" v-for="movie in movieArray" :key="movie.id">
         <router-link class="routerLink" :to="'/movie/' + movie.id">
-          <div class="poster" @click="seeDetails(movie.id)">
+          <div class="poster" @click="seeDetailsAboutMovie(movie.id)">
             <div class="rating">
               <h6>
                 <font-awesome-icon icon="star" class="starIcon" />
@@ -52,15 +54,16 @@
 
 <script>
 import Footer from "../components/Footer.vue";
+import DetailsMixin from "../DetailsMixin.js";
 import axios from "axios";
 
 export default {
+  mixins: [DetailsMixin],
   data() {
     return {
       title: "MovieViewer",
       inputText: "",
       movieArray: [],
-      isHidden: false,
       currentPage: 1,
     };
   },
@@ -80,8 +83,8 @@ export default {
         });
       this.inputText = "";
     },
-    seeDetails(id) {
-      this.$router.push("/movie" + id);
+    seeDetailsAboutMovie(id) {
+      this.seeDetails();
     },
     loadMore() {
       this.currentPage++;
@@ -95,17 +98,20 @@ export default {
           this.movieArray = newData;
         });
     },
+    getPopularMovies() {
+      axios
+        .get(
+          `${this.$store.state.url}/popular?api_key=${this.$store.state.apiKey}&page=${this.currentPage}`
+        )
+        .then((response) => {
+          console.log(response);
+          this.movieArray = response.data.results;
+        })
+        .catch((error) => console.log(error));
+    },
   },
   created() {
-    axios
-      .get(
-        `${this.$store.state.url}/popular?api_key=${this.$store.state.apiKey}&page=${this.currentPage}`
-      )
-      .then((response) => {
-        console.log(response);
-        this.movieArray = response.data.results;
-      })
-      .catch((error) => console.log(error));
+    this.getPopularMovies();
   },
   components: {
     footerApp: Footer,
@@ -294,7 +300,7 @@ span:hover:before {
 }
 
 .movieCard .textMovies .title {
-  height: 40%;
+  height: 30%;
   font-size: 120%;
   display: flex;
   justify-content: center;
@@ -343,7 +349,7 @@ span:hover:before {
   }
 
   .searchIcon {
-    right: 90px;
+    right: 140px;
   }
 
   .popularMovies h1 {

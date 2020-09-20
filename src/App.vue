@@ -27,9 +27,12 @@ body {
   font-family: "Ibarra Real Nova", serif;
 }
 
-@media (max-width: 360px) {
+@media (max-width: 768px) {
   body {
-    margin: 0;
+    margin: 0 40px;
   }
+}
+
+@media (max-width: 360px) {
 }
 </style>

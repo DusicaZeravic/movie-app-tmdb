@@ -8,10 +8,6 @@ Vue.use(Router)
 const router = new Router ({
     mode: 'history',
     routes: [
-        // {
-        //     path: '/',
-        //     redirect: '/movies'
-        // },
         {
             path: '/',
             component: Movies
